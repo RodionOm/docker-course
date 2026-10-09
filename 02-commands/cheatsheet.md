@@ -44,3 +44,15 @@
 - `rotorocloud/webapp`: Ctrl+C in `attach` did NOT stop it: main process is `/bin/sh -c ...`, which ignores SIGINT.
 - Port not reachable from browser without `-p 5000:5000` (PORTS showed `5000/tcp` with no arrow).
 - 4 stopped containers = 102 kB total: containers store only their own changes on top of the shared image.
+## Cleanup: stop & delete everything
+
+```bash
+docker stop $(docker ps -q)       # stop all RUNNING containers (-q = IDs only)
+docker container prune            # delete all STOPPED containers (asks y/N)
+docker rmi $(docker images -q)    # delete all images (only after containers are gone)
+```
+
+- `$( ... )` = run the inner command first, paste its output as arguments.
+- `ps -q` → running only; `ps -aq` → all (use with `rm`).
+- Order matters: containers first, then images — an image can't be removed while any container (even stopped) uses it.
+- Shortcut: `docker rm -f $(docker ps -aq)` = stop + delete all containers in one step.
