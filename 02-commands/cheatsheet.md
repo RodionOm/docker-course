@@ -56,3 +56,24 @@ docker rmi $(docker images -q)    # delete all images (only after containers are
 - `ps -q` → running only; `ps -aq` → all (use with `rm`).
 - Order matters: containers first, then images — an image can't be removed while any container (even stopped) uses it.
 - Shortcut: `docker rm -f $(docker ps -aq)` = stop + delete all containers in one step.
+
+## docker run options (lesson 2.6)
+
+```bash
+docker run [DOCKER FLAGS] image:tag [ARGS FOR THE APP]
+```
+- Everything **after** the image goes to the app inside, not to Docker
+  (`--name v2` after the image → `app.py: unrecognized arguments`).
+
+| Flag | Meaning | Example |
+|---|---|---|
+| `:tag` | image version, default `latest` | `redis:5.0`, `nginx:alpine`, `rockets:v2` |
+| `-it` | keyboard (`-i`) + terminal (`-t`) | `docker run -it ubuntu bash` |
+| `-p HOST:CONTAINER` | publish port ("outside : inside") | `-p 30123:8080` |
+| `-v HOST_DIR:CONTAINER_DIR` | mount folder, data survives `rm` | `-v /opt/datadir:/var/lib/mysql` |
+| `--name` | container name (≠ tag!) | `--name webportal` |
+
+- `ps` PORTS `0.0.0.0:30080->80/tcp` = host 30080 → container 80. `:::` lines = IPv6 duplicates.
+- Container ports can repeat; a **host** port can be used only once.
+- Ports/volumes can't be changed on an existing container → `docker rm -f name` + `docker run` again.
+- `docker inspect name` = full JSON (state, OOMKilled, ports, mounts). `docker logs name` = app output.
